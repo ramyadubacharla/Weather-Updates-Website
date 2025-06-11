@@ -1,2 +1,90 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Weather App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🌤 Weather App</h1>
+    <input type="text" id="cityInput" placeholder="Enter city name" />
+    <button onclick="getWeather()">Get Weather</button>
+    <div id="weatherResult"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to top right, #74ebd5, #9face6);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+input {
+  padding: 10px;
+  width: 200px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+}
+
+button {
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #0077ff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #005fd1;
+}
+
+#weatherResult {
+  margin-top: 20px;
+  font-size: 18px;
+}
+async function getWeather() {
+  const city = document.getElementById("cityInput").value;
+  const apiKey = "YOUR_API_KEY"; // Replace with your OpenWeatherMap API key
+  const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+  const resultDiv = document.getElementById("weatherResult");
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("City not found");
+    const data = await response.json();
+
+    const temp = data.main.temp;
+    const desc = data.weather[0].description;
+    const icon = data.weather[0].icon;
+
+    resultDiv.innerHTML = `
+      <h2>${data.name}, ${data.sys.country}</h2>
+      <img src="http://openweathermap.org/img/wn/${icon}@2x.png" alt="${desc}" />
+      <p><strong>${temp}°C</strong></p>
+      <p>${desc}</p>
+    `;
+  } catch (error) {
+    resultDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+  }
+}
